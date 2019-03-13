@@ -1,0 +1,7 @@
+{
+  "build/umd/scc-common.production.min.js": {
+    "bundled": 707,
+    "minified": 479,
+    "gzipped": 317
+  }
+}

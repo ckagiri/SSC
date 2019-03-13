@@ -1,0 +1,186 @@
+import React, { Component } from 'react';
+import MuiListItem from '@material-ui/core/ListItem';
+import { PulseLoader } from 'react-spinners';
+import { makeStyles } from '@material-ui/styles';
+import {
+  InfiniteLoader,
+  List,
+  CellMeasurer,
+  CellMeasurerCache,
+  AutoSizer,
+  ColumnSizer,
+} from 'react-virtualized';
+
+const itemStyles = makeStyles(theme => ({
+  even: {
+    backgroundColor: theme.palette.grey[100],
+  },
+}));
+
+const ListItem = ({ index, getListItem, style, className, ...props }) => {
+  const classes = itemStyles();
+  return (
+    <div style={style} className={classes[(index + 1) % 2 ? 'odd' : 'even']}>
+      {getListItem({
+        index,
+        ...props,
+      })}
+    </div>
+  );
+};
+class VirtualList extends Component {
+  cache = new CellMeasurerCache({
+    fixedHeight: true,
+    defaultHeight: 48,
+    // fixedHeight: !!this.props.rowHeight,
+    // fixedWidth: !this.props.rowHeight,
+    // defaultWidth: this.props.width,
+    // defaultHeight: 48,
+    keyMapper: this.props.getItemKey,
+  });
+  startIndex = 0;
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (this.props.getItemKey !== nextProps.getItemKey) {
+      this.cache._keyMapper = nextProps.getItemKey;
+    }
+
+    if (this.props.totalCount !== nextProps.totalCount || this.props.width !== nextProps.width) {
+      // Need to recalculate all heights since list is changed
+      this.cache.clearAll();
+      this.list.recomputeRowHeights();
+    }
+  }
+
+  getMenuHeight = (rowHeight, rowCount, menuItemCount, showEmpty) => {
+    if (rowCount) {
+      const visibleCount = Math.min(rowCount, menuItemCount);
+      let height = 0;
+      for (let i = this.startIndex; i < visibleCount + this.startIndex; i++) {
+        height += typeof rowHeight === 'function' ? rowHeight({ index: i }) : rowHeight;
+      }
+      return height;
+    }
+    if (showEmpty) {
+      return typeof rowHeight === 'function' ? rowHeight({ index: 0 }) : rowHeight;
+    }
+    return 0;
+  };
+  render() {
+    const {
+      menuItemCount,
+      rowHeight: rowHeightProp,
+      rowCount,
+      totalCount,
+      loadMoreRows,
+      loading,
+      getItem,
+      getItemKey,
+      menuHeight,
+      getEmpty,
+      getLoader,
+      width: widthProp,
+      ...props
+    } = this.props;
+
+    const infiniteLoaderProps = {
+      loadMoreRows,
+      rowCount: totalCount,
+      isRowLoaded: index => index < rowCount,
+    };
+
+    const fixedHeight = !!rowHeightProp;
+    const rowHeight = rowHeightProp || this.cache.rowHeight;
+
+    const listCount = loadMoreRows ? Math.min(totalCount, rowCount + 1) : rowCount;
+    const height =
+      menuHeight || this.getMenuHeight(rowHeight, listCount, menuItemCount, !!getEmpty);
+    const rowRenderer = ({ index, style, parent, key, ...rowProps }) => {
+      const getListItem = index < rowCount ? getItem : getLoader;
+      const _key = getItemKey ? getItemKey(index) : key;
+
+      console.log(this.cache.columnWidth(0));
+
+      return (
+        <CellMeasurer
+          cache={this.cache}
+          columnIndex={0}
+          rowIndex={index}
+          parent={parent}
+          key={_key}
+        >
+          <ListItem
+            style={{
+              ...style,
+              whiteSpace: fixedHeight ? 'nowrap' : null,
+            }}
+            key={_key}
+            index={index}
+            getListItem={getListItem}
+            {...rowProps}
+          />
+        </CellMeasurer>
+      );
+    };
+
+    const listProps = {
+      height,
+      rowRenderer,
+      noRowsRenderer: getEmpty,
+      rowHeight,
+      rowCount: listCount,
+      columnCount: 1,
+      overscanColumnCount: 0,
+      overscanRowCount: 2,
+      deferredMeasurementCache: this.cache,
+      ...props,
+    };
+
+    return (
+      <AutoSizer disableHeight>
+        {({ width }) =>
+          loadMoreRows ? (
+            <InfiniteLoader {...infiniteLoaderProps}>
+              {({ onRowsRendered, registerChild }) => (
+                <List
+                  width={width}
+                  onRowsRendered={args => {
+                    this.forceUpdate();
+                    this.startIndex = args.startIndex;
+                    onRowsRendered && onRowsRendered(args);
+                  }}
+                  ref={el => {
+                    this.list = el;
+                    if (registerChild) {
+                      registerChild(el);
+                    }
+                  }}
+                  {...listProps}
+                />
+              )}
+            </InfiniteLoader>
+          ) : (
+            <List
+              width={width}
+              ref={el => {
+                this.list = el;
+              }}
+              {...listProps}
+            />
+          )
+        }
+      </AutoSizer>
+    );
+  }
+}
+
+VirtualList.defaultProps = {
+  menuItemCount: 5,
+  getLoader: () => (
+    <MuiListItem button disabled>
+      <PulseLoader size={10} margin="2px" />
+    </MuiListItem>
+  ),
+};
+
+export default VirtualList;

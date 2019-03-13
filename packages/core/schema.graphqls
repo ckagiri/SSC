@@ -1,0 +1,2305 @@
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+scalar ActionValue
+
+type Address {
+  """Một contact có nhiều địa chỉ với các mục đích khác nhau"""
+  addressType: AddressTypeValue!
+
+  """Tên liên hệ"""
+  name: String
+  company: String
+
+  """Điện thoại Khi người nhận hàng là người khác"""
+  phone: String
+
+  """Nếu địa chỉ dùng xuất hoá đơn, yêu cầu thêm mã số thuế"""
+  taxID: String
+  street1: String
+  street2: String
+  town: String
+  city: String
+}
+
+input AddressInput {
+  """Một contact có nhiều địa chỉ với các mục đích khác nhau"""
+  addressType: AddressTypeValue = "PRIMARY"
+
+  """Tên liên hệ"""
+  name: String
+  company: String
+
+  """Điện thoại Khi người nhận hàng là người khác"""
+  phone: String
+
+  """Nếu địa chỉ dùng xuất hoá đơn, yêu cầu thêm mã số thuế"""
+  taxID: String
+  street1: String
+  street2: String
+  town: String
+  city: String
+}
+
+scalar AddressTypeValue
+
+input AddressUpdate {
+  """Một contact có nhiều địa chỉ với các mục đích khác nhau"""
+  addressType: AddressTypeValue = "PRIMARY"
+
+  """Tên liên hệ"""
+  name: String
+  company: String
+
+  """Điện thoại Khi người nhận hàng là người khác"""
+  phone: String
+
+  """Nếu địa chỉ dùng xuất hoá đơn, yêu cầu thêm mã số thuế"""
+  taxID: String
+  street1: String
+  street2: String
+  town: String
+  city: String
+}
+
+type Area implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String!
+  physical: Boolean!
+  sortOrder: Int!
+  locations(filter: LocationFilter, orderBy: [LocationOrderBy]): [Location]
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+scalar AreaCode
+
+input AreaFilter {
+  physical: Boolean
+}
+
+enum AreaOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+type Assignment implements Node {
+  """The ID of an object"""
+  id: ID!
+
+  """Where do this assignment be initiated"""
+  source: Source
+  request: String
+  result: String
+  priority: Int
+  status: Int
+  location: LocationCode
+
+  """Contact to work with for this assignment"""
+  contact: Contact
+
+  """Who need to perform this assignment"""
+  assignedTo: Contact
+
+  """Person who make this assignment to"""
+  assignedBy: Contact
+  scheduledAt: DateTime
+
+  """when assignedTo received and read this assignment"""
+  receivedAt: DateTime
+
+  """when assignedTo started to work on this assignment"""
+  startedAt: DateTime
+
+  """when assignedTo finished working on this assignment"""
+  completedAt: DateTime
+
+  """when assignment is sent to assignTo"""
+  assignedAt: DateTime
+
+  """Action to be taken"""
+  action: ActionValue
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type AssignmentConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AssignmentEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type AssignmentEdge {
+  """The item at the end of the edge"""
+  node: Assignment
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input AssignmentFilter {
+  priority: Int
+  status: Int
+}
+
+input AssignmentInput {
+  """Where do this assignment be initiated"""
+  source: SourceInput
+  request: String
+  result: String
+  priority: Int
+  status: Int
+  location: LocationCode
+
+  """Contact to work with for this assignment"""
+  contactId: ID
+
+  """Who need to perform this assignment"""
+  assignedToId: ID
+
+  """Person who make this assignment to"""
+  assignedById: ID
+  scheduledAt: DateTime
+
+  """when assignment is sent to assignTo"""
+  assignedAt: DateTime
+
+  """Action to be taken"""
+  action: ActionValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+enum AssignmentOrderBy {
+  PRIORITY_ASC
+  PRIORITY_DESC
+  STATUS_ASC
+  STATUS_DESC
+}
+
+type Brand implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String!
+  title: String
+  sortOrder: Int
+  programs(orderBy: [ProgramOrderBy]): [Program]
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+scalar BrandCode
+
+enum BrandOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+scalar CategoryValue
+
+input ChangePasswordUserInput {
+  oldPassword: String!
+  newPassword: String!
+  clientMutationId: String
+}
+
+type ChangePasswordUserPayload {
+  user: User
+  clientMutationId: String
+}
+
+type City implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String!
+  prefix: String
+  towns(filter: TownFilter, orderBy: [TownOrderBy]): [Town]
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+input CityFilter {
+  name: String
+}
+
+enum CityOrderBy {
+  NAME_ASC
+  NAME_DESC
+  PREFIX_ASC
+  PREFIX_DESC
+}
+
+type Consultation {
+  """Where do this assignment be initiated"""
+  source: Source
+
+  """Health condition"""
+  condition: String
+  request: String
+  assessement: String
+  advice: String
+  program: String
+  measurement: JSON
+  consultant: JSON
+  assignment: Assignment
+  action: ActionValue
+}
+
+input ConsultationUpdate {
+  """Where do this assignment be initiated"""
+  source: SourceUpdate
+
+  """Health condition"""
+  condition: String
+  request: String
+  assessement: String
+  advice: String
+  program: String
+  measurement: JSON
+  consultant: JSON
+  assignmentId: ID
+  action: ActionValue
+}
+
+interface Contact {
+  """The ID of an object"""
+  id: ID!
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  fullName: String
+  shortName: String
+  phone: String
+  email: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue!
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+  position: PositionCode
+  positions: [PositionLog]
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [Address]
+  identification: [Identification]
+  messages: [Message]
+  status: StatusValue
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type ContactConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ContactEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type ContactEdge {
+  """The item at the end of the edge"""
+  node: Contact
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input ContactFilter {
+  firstName: String
+  lastName: String
+  phone: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue
+  position: PositionCode
+  status: StatusValue
+}
+
+input ContactInput {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressInput]
+  identification: [IdentificationInput]
+  messages: [MessageInput]
+  status: StatusValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+enum ContactOrderBy {
+  FIRSTNAME_ASC
+  FIRSTNAME_DESC
+  LASTNAME_ASC
+  LASTNAME_DESC
+}
+
+type ContactQuery {
+  contacts(filter: ContactFilter, orderBy: [ContactOrderBy], after: String, first: Int, before: String, last: Int): ContactConnection
+  contact(id: ID!): Contact
+  contactBy(phone: String, email: String): Contact
+}
+
+input CreateCustomerInput {
+  customer: CustomerInput
+  clientMutationId: String
+}
+
+type CreateCustomerPayload {
+  customer: Customer
+  clientMutationId: String
+}
+
+input CreateDistributorInput {
+  distributor: DistributorInput
+  clientMutationId: String
+}
+
+type CreateDistributorPayload {
+  distributor: Distributor
+  clientMutationId: String
+}
+
+input CreateLocationInput {
+  location: LocationInput
+  clientMutationId: String
+}
+
+type CreateLocationPayload {
+  location: Location
+  clientMutationId: String
+}
+
+input CreatePositionInput {
+  position: PositionInput
+  clientMutationId: String
+}
+
+type CreatePositionPayload {
+  position: Position
+  clientMutationId: String
+}
+
+input CreateProductPriceInput {
+  productPrice: ProductPriceInput
+  clientMutationId: String
+}
+
+type CreateProductPricePayload {
+  productPrice: ProductPrice
+  clientMutationId: String
+}
+
+input CreateReturnItemInput {
+  returnItem: ReturnItemInput
+  clientMutationId: String
+}
+
+type CreateReturnItemPayload {
+  returnItem: ReturnItem
+  clientMutationId: String
+}
+
+input CreateReturnOrderInput {
+  returnOrder: ReturnOrderInput
+  clientMutationId: String
+}
+
+type CreateReturnOrderPayload {
+  returnOrder: ReturnOrder
+  clientMutationId: String
+}
+
+input CreateSalesOrderInput {
+  salesOrder: SalesOrderInput
+  clientMutationId: String
+}
+
+input CreateSalesOrderItemInput {
+  salesOrderItem: SalesOrderItemInput
+  clientMutationId: String
+}
+
+type CreateSalesOrderItemPayload {
+  salesOrderItem: SalesOrderItem
+  clientMutationId: String
+}
+
+type CreateSalesOrderPayload {
+  salesOrder: SalesOrder
+  clientMutationId: String
+}
+
+input CreateStaffInput {
+  staff: StaffInput
+  clientMutationId: String
+}
+
+type CreateStaffPayload {
+  staff: Staff
+  clientMutationId: String
+}
+
+type Customer implements Node & Contact {
+  """The ID of an object"""
+  id: ID!
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  fullName: String
+  shortName: String
+  phone: String
+  email: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue!
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+  position: PositionCode
+  positions: [PositionLog]
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [Address]
+  identification: [Identification]
+  messages: [Message]
+  status: StatusValue
+  anonymous: Boolean
+  persons: [Person]
+
+  """Chuyên viên Tư vấn sơ bộ"""
+  teleconsultant: Contact
+
+  """Chuyên viên Tư vấn"""
+  preconsultant: Contact
+
+  """Chuyên viên Chăm sóc"""
+  consultant: Contact
+
+  """The contact who refer to this customer"""
+  introducedBy: Contact
+
+  """Customers which are introduced by this customer"""
+  introduceTo(filter: CustomerFilter, orderBy: [CustomerOrderBy], after: String, first: Int, before: String, last: Int): CustomerConnection
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type CustomerConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type CustomerEdge {
+  """The item at the end of the edge"""
+  node: Customer
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input CustomerFilter {
+  firstName: String
+  lastName: String
+  phone: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue
+  position: PositionCode
+  status: StatusValue
+}
+
+input CustomerInput {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressInput]
+  identification: [IdentificationInput]
+  messages: [MessageInput]
+  status: StatusValue
+  anonymous: Boolean
+
+  """Chuyên viên Tư vấn sơ bộ"""
+  teleconsultantId: ID
+
+  """Chuyên viên Tư vấn"""
+  preconsultantId: ID
+
+  """Chuyên viên Chăm sóc"""
+  consultantId: ID
+
+  """The contact who refer to this customer"""
+  introducedById: ID
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type CustomerMutations {
+  create(input: CreateCustomerInput!): CreateCustomerPayload
+  update(input: UpdateCustomerInput!): UpdateCustomerPayload
+  upsert(input: UpsertCustomerInput!): UpsertCustomerPayload
+  delete(input: DeleteCustomerInput!): DeleteCustomerPayload
+}
+
+enum CustomerOrderBy {
+  FIRSTNAME_ASC
+  FIRSTNAME_DESC
+  LASTNAME_ASC
+  LASTNAME_DESC
+}
+
+input CustomerUpdate {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressUpdate]
+  identification: [IdentificationUpdate]
+  messages: [MessageUpdate]
+  status: StatusValue
+  anonymous: Boolean
+
+  """Chuyên viên Tư vấn sơ bộ"""
+  teleconsultantId: ID
+
+  """Chuyên viên Tư vấn"""
+  preconsultantId: ID
+
+  """Chuyên viên Chăm sóc"""
+  consultantId: ID
+
+  """The contact who refer to this customer"""
+  introducedById: ID
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format
+outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
+representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+input DeleteCustomerInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteCustomerPayload {
+  customer: Customer
+  clientMutationId: String
+}
+
+input DeleteDistributorInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteDistributorPayload {
+  distributor: Distributor
+  clientMutationId: String
+}
+
+input DeleteLocationInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteLocationPayload {
+  location: Location
+  clientMutationId: String
+}
+
+input DeletePositionInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeletePositionPayload {
+  position: Position
+  clientMutationId: String
+}
+
+input DeleteProductPriceInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteProductPricePayload {
+  productPrice: ProductPrice
+  clientMutationId: String
+}
+
+input DeleteReturnItemInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteReturnItemPayload {
+  returnItem: ReturnItem
+  clientMutationId: String
+}
+
+input DeleteReturnOrderInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteReturnOrderPayload {
+  returnOrder: ReturnOrder
+  clientMutationId: String
+}
+
+input DeleteSalesOrderInput {
+  id: ID!
+  clientMutationId: String
+}
+
+input DeleteSalesOrderItemInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteSalesOrderItemPayload {
+  salesOrderItem: SalesOrderItem
+  clientMutationId: String
+}
+
+type DeleteSalesOrderPayload {
+  salesOrder: SalesOrder
+  clientMutationId: String
+}
+
+input DeleteStaffInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type DeleteStaffPayload {
+  staff: Staff
+  clientMutationId: String
+}
+
+type Distributor implements Node & Contact {
+  """The ID of an object"""
+  id: ID!
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  fullName: String
+  shortName: String
+  phone: String
+  email: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue!
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+  position: PositionCode
+  positions: [PositionLog]
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [Address]
+  identification: [Identification]
+  messages: [Message]
+  status: StatusValue
+  area: AreaCode
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+input DistributorInput {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressInput]
+  identification: [IdentificationInput]
+  messages: [MessageInput]
+  status: StatusValue
+  area: AreaCode
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type DistributorMutations {
+  create(input: CreateDistributorInput!): CreateDistributorPayload
+  update(input: UpdateDistributorInput!): UpdateDistributorPayload
+  upsert(input: UpsertDistributorInput!): UpsertDistributorPayload
+  delete(input: DeleteDistributorInput!): DeleteDistributorPayload
+}
+
+input DistributorUpdate {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressUpdate]
+  identification: [IdentificationUpdate]
+  messages: [MessageUpdate]
+  status: StatusValue
+  area: AreaCode
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+scalar FieldsValue
+
+scalar GenderValue
+
+type Identification {
+  idNo: String!
+
+  """Type of: ID Card or Passport"""
+  idType: IdTypeValue
+  placeOfIssue: String
+  dateOfIssue: Date
+  dateOfExpired: Date
+}
+
+input IdentificationInput {
+  idNo: String!
+
+  """Type of: ID Card or Passport"""
+  idType: IdTypeValue = "ID"
+  placeOfIssue: String
+  dateOfIssue: Date
+  dateOfExpired: Date
+}
+
+input IdentificationUpdate {
+  idNo: String
+
+  """Type of: ID Card or Passport"""
+  idType: IdTypeValue = "ID"
+  placeOfIssue: String
+  dateOfIssue: Date
+  dateOfExpired: Date
+}
+
+scalar IdTypeValue
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+scalar LineItemStatusValue
+
+type Lists {
+  addressTypes: [StringValues]
+  actions: [StringValues]
+  prefixes: [StringValues]
+  categories: [StringValues]
+  statuses: [StringValues]
+  idTypes: [StringValues]
+  genders: [StringValues]
+  unitOfMeasures: [StringValues]
+  returnStatuses: [StringValues]
+  orderTypes: [StringValues]
+  orderStatuses: [StringValues]
+  lineItemStatuses: [StringValues]
+  fields: [StringValues]
+}
+
+type Location implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String
+  code: String
+  phone: String
+  address: Address
+  ext: String
+  shop: String
+  area: AreaCode
+  physical: Boolean
+  sortOrder: Int
+  openDate: Date
+  closeDate: Date
+  openingTime: String
+  closingTime: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+scalar LocationCode
+
+input LocationFilter {
+  code: String
+  physical: Boolean
+}
+
+input LocationInput {
+  name: String
+  code: String
+  phone: String
+  address: AddressInput
+  ext: String
+  shop: String
+  area: AreaCode
+  physical: Boolean
+  sortOrder: Int
+  openDate: Date
+  closeDate: Date
+  openingTime: String
+  closingTime: String
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type LocationMutations {
+  create(input: CreateLocationInput!): CreateLocationPayload
+  update(input: UpdateLocationInput!): UpdateLocationPayload
+  delete(input: DeleteLocationInput!): DeleteLocationPayload
+}
+
+enum LocationOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+input LocationUpdate {
+  name: String
+  code: String
+  phone: String
+  address: AddressUpdate
+  ext: String
+  shop: String
+  area: AreaCode
+  physical: Boolean
+  sortOrder: Int
+  openDate: Date
+  closeDate: Date
+  openingTime: String
+  closingTime: String
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+input LoginJwtUserInput {
+  accessToken: String
+  clientMutationId: String
+}
+
+type LoginJwtUserPayload {
+  accessToken: String
+  user: User
+  clientMutationId: String
+}
+
+input LoginUserInput {
+  credential: String!
+  password: String!
+  location: String
+  clientMutationId: String
+}
+
+type LoginUserPayload {
+  accessToken: String
+  user: User
+  clientMutationId: String
+}
+
+input LogoutUserInput {
+  accessToken: String
+  clientMutationId: String
+}
+
+type LogoutUserPayload {
+  accessToken: String
+  clientMutationId: String
+}
+
+input MakePreconsultationStaffInput {
+  customer: CustomerInput!
+  assignment: AssignmentInput!
+  contact: ContactInput!
+  persons: [PersonUpdate]
+  preconsultantId: String
+  consultantId: String
+  clientMutationId: String
+}
+
+type MakePreconsultationStaffPayload {
+  assignment: Assignment
+  clientMutationId: String
+}
+
+type Message {
+  user: User
+  text: String
+  done: Boolean
+  expiredAt: DateTime
+  publishedAt: DateTime
+  replyTo: Message
+}
+
+input MessageInput {
+  userId: ID
+  text: String
+  done: Boolean
+  expiredAt: DateTime
+  publishedAt: DateTime
+  replyTo: MessageInput
+}
+
+input MessageUpdate {
+  userId: ID
+  text: String
+  done: Boolean
+  expiredAt: DateTime
+  publishedAt: DateTime
+  replyTo: MessageUpdate
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+scalar OrderStatusValue
+
+scalar OrderTypeValue
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Person implements Node {
+  """The ID of an object"""
+  id: ID!
+  prefix: PrefixValue
+  name: String!
+  gender: GenderValue
+  weight: Float
+  height: Int
+  age: Int
+  loss: Float
+  month: Int
+
+  """Date of starting activities"""
+  startedAt: Date
+  consultations: [Consultation]
+
+  """Contact of this person"""
+  customer: Customer
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+input PersonUpdate {
+  prefix: PrefixValue
+  name: String
+  gender: GenderValue
+  weight: Float
+  height: Int
+  age: Int
+  loss: Float
+  month: Int
+
+  """Date of starting activities"""
+  startedAt: Date
+  consultations: [ConsultationUpdate]
+
+  """Contact of this person"""
+  customerId: ID
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type Position implements Node {
+  """The ID of an object"""
+  id: ID!
+  code: String
+  title: String!
+  discount: Float
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue!
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+scalar PositionCode
+
+input PositionInput {
+  title: String!
+  discount: Float
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue = "Customer"
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type PositionLog {
+  category: CategoryValue
+  position: PositionCode
+  reason: String
+  fromDate: Date
+  toDate: Date
+  promotedBy: Contact
+  promotedAt: Date
+  approvedBy: Contact
+}
+
+type PositionMutations {
+  create(input: CreatePositionInput!): CreatePositionPayload
+  update(input: UpdatePositionInput!): UpdatePositionPayload
+  delete(input: DeletePositionInput!): DeletePositionPayload
+}
+
+input PositionUpdate {
+  title: String
+  discount: Float
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue = "Customer"
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+scalar PrefixValue
+
+type Product implements Node {
+  """The ID of an object"""
+  id: ID!
+  productCategory: ProductCategory!
+  productCode: String!
+  productName: String!
+  internalName: String!
+  simpleName: String!
+  brandName: String
+  comments: String
+  description: String
+  longDescription: String
+  productImageUrl: String
+  unitOfMeasure: UnitOfMeasureValue
+  fromDate: Date
+  toDate: Date
+  available: Boolean
+  sortOrder: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+type ProductCategory implements Node {
+  """The ID of an object"""
+  id: ID!
+  categoryCode: String!
+  categoryName: String!
+  description: String
+  longDescription: String
+  categoryImageUrl: String
+  isPhysical: Boolean
+  sortOrder: Float
+  fromDate: Date
+  toDate: Date
+  products(filter: ProductFilter, orderBy: [ProductOrderBy]): [Product]
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+input ProductFilter {
+  productCode: String
+  productName: String
+  internalName: String
+  simpleName: String
+}
+
+enum ProductOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+type ProductPrice implements Node {
+  """The ID of an object"""
+  id: ID!
+  contactCategory: String
+  description: String
+  fromDate: Date
+  toDate: Date
+  priceWithoutTax: Float
+  priceWithTax: Float
+  taxPercentage: Float
+  taxAmount: Float
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean
+  sortOrder: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type ProductPriceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductPriceEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type ProductPriceEdge {
+  """The item at the end of the edge"""
+  node: ProductPrice
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input ProductPriceFilter {
+  contactCategory: String
+}
+
+input ProductPriceInput {
+  contactCategory: String
+  description: String
+  fromDate: Date
+  toDate: Date
+  priceWithoutTax: Float
+  priceWithTax: Float
+  taxPercentage: Float = 10
+  taxAmount: Float
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean = true
+  sortOrder: Float = 1
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type ProductPriceMutations {
+  create(input: CreateProductPriceInput!): CreateProductPricePayload
+  update(input: UpdateProductPriceInput!): UpdateProductPricePayload
+  delete(input: DeleteProductPriceInput!): DeleteProductPricePayload
+}
+
+type ProductPriceQuery {
+  """Price List"""
+  productPrices(filter: ProductPriceFilter, after: String, first: Int, before: String, last: Int): ProductPriceConnection
+  productPrice(id: ID!): ProductPrice
+}
+
+input ProductPriceUpdate {
+  contactCategory: String
+  description: String
+  fromDate: Date
+  toDate: Date
+  priceWithoutTax: Float
+  priceWithTax: Float
+  taxPercentage: Float = 10
+  taxAmount: Float
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean = true
+  sortOrder: Float = 1
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type Program implements Node {
+  """The ID of an object"""
+  id: ID!
+  brand: BrandCode
+  code: String
+  name: String!
+  title: String
+  sortOrder: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+enum ProgramOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+input ReceiveAppointmentStaffInput {
+  assignmentId: ID!
+  clientMutationId: String
+}
+
+type ReceiveAppointmentStaffPayload {
+  assignment: Assignment
+  clientMutationId: String
+}
+
+input RegisterUserInput {
+  id: ID!
+  username: String!
+  password: String!
+  locations: [LocationUpdate]
+  clientMutationId: String
+}
+
+type RegisterUserPayload {
+  user: User
+  clientMutationId: String
+}
+
+type ReturnItem implements Node {
+  """The ID of an object"""
+  id: ID!
+  returnOrder: ReturnOrder
+  product: Product
+  description: String
+  salesOrder: SalesOrder
+  salesOrderItem: SalesOrderItem
+  returnQuantity: Float
+  receivedQuantity: Float
+  returnPrice: Float
+  returnRevenue: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type ReturnItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReturnItemEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type ReturnItemEdge {
+  """The item at the end of the edge"""
+  node: ReturnItem
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input ReturnItemInput {
+  returnOrderId: ID
+  productId: ID
+  description: String
+  salesOrderId: ID
+  salesOrderItemId: ID
+  returnQuantity: Float
+  receivedQuantity: Float
+  returnPrice: Float
+  returnRevenue: Float
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type ReturnItemMutations {
+  create(input: CreateReturnItemInput!): CreateReturnItemPayload
+  update(input: UpdateReturnItemInput!): UpdateReturnItemPayload
+  delete(input: DeleteReturnItemInput!): DeleteReturnItemPayload
+}
+
+type ReturnItemQuery {
+  returnItems(after: String, first: Int, before: String, last: Int): ReturnItemConnection
+  returnItem(id: ID!): ReturnItem
+}
+
+input ReturnItemUpdate {
+  returnOrderId: ID
+  productId: ID
+  description: String
+  salesOrderId: ID
+  salesOrderItemId: ID
+  returnQuantity: Float
+  receivedQuantity: Float
+  returnPrice: Float
+  returnRevenue: Float
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type ReturnOrder implements Node {
+  """The ID of an object"""
+  id: ID!
+  entryDate: DateTime
+  reason: String
+  returnAmount: Float
+  returnRevenue: Float
+  returnStatus: ReturnStatusValue
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type ReturnOrderConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReturnOrderEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type ReturnOrderEdge {
+  """The item at the end of the edge"""
+  node: ReturnOrder
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input ReturnOrderInput {
+  entryDate: DateTime = "2019-02-13T05:06:36.055Z"
+  reason: String
+  returnAmount: Float
+  returnRevenue: Float
+  returnStatus: ReturnStatusValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type ReturnOrderMutations {
+  create(input: CreateReturnOrderInput!): CreateReturnOrderPayload
+  update(input: UpdateReturnOrderInput!): UpdateReturnOrderPayload
+  delete(input: DeleteReturnOrderInput!): DeleteReturnOrderPayload
+}
+
+type ReturnOrderQuery {
+  returnOrders(after: String, first: Int, before: String, last: Int): ReturnOrderConnection
+  returnOrder(id: ID!): ReturnOrder
+}
+
+input ReturnOrderUpdate {
+  entryDate: DateTime = "2019-02-13T05:06:36.055Z"
+  reason: String
+  returnAmount: Float
+  returnRevenue: Float
+  returnStatus: ReturnStatusValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+scalar ReturnStatusValue
+
+type RootMutation {
+  customerMutation: CustomerMutations
+  distributorMutation: DistributorMutations
+  locationMutation: LocationMutations
+  positionMutation: PositionMutations
+  productPriceMutation: ProductPriceMutations
+  returnItemMutation: ReturnItemMutations
+  returnOrderMutation: ReturnOrderMutations
+  salesOrderMutation: SalesOrderMutations
+  salesOrderItemMutation: SalesOrderItemMutations
+  staffMutation: StaffMutations
+  userMutation: UserMutations
+}
+
+type RootQuery {
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+  authenticated: Boolean
+  viewer: Contact
+  location: LocationCode
+  areas(filter: AreaFilter, orderBy: [AreaOrderBy]): [Area]
+  brands(orderBy: [BrandOrderBy]): [Brand]
+  programs(orderBy: [ProgramOrderBy]): [Program]
+  cities(filter: CityFilter, orderBy: [CityOrderBy]): [City]
+  touchpoints(orderBy: [TouchpointOrderBy]): [Touchpoint]
+  locations(filter: LocationFilter, orderBy: [LocationOrderBy]): [Location]
+  products(filter: ProductFilter, orderBy: [ProductOrderBy]): [Product]
+  contactQuery: ContactQuery
+  productPriceQuery: ProductPriceQuery
+  returnItemQuery: ReturnItemQuery
+  returnOrderQuery: ReturnOrderQuery
+  salesOrderQuery: SalesOrderQuery
+  salesOrderItemQuery: SalesOrderItemQuery
+  staffQuery: StaffQuery
+  lists: Lists
+}
+
+type SalesOrder implements Node {
+  """The ID of an object"""
+  id: ID!
+  orderDate: DateTime
+  contact: Contact!
+  location: LocationCode
+  orderType: OrderTypeValue
+  orderStatus: OrderStatusValue
+  notes: [Message]
+  orderLines: [JSON]
+
+  """Tổng tiền đơn hàng"""
+  grandTotal: Float
+
+  """Phí chuyển hàng"""
+  shippingFee: Float
+
+  """Khuyến mại"""
+  promotionAmount: Float
+
+  """Giảm giá cho khách hàng Thân thiết, VIP"""
+  discountAmount: Float
+
+  """
+  Thành tiền = grandTotal - discountAmount - promotionAmount + shippingFee 
+  """
+  totalAmount: Float
+
+  """Doanh thu tính thưởng NTV"""
+  revenueTotal: Float
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type SalesOrderConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SalesOrderEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type SalesOrderEdge {
+  """The item at the end of the edge"""
+  node: SalesOrder
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input SalesOrderInput {
+  orderDate: DateTime
+  contactId: ID
+  location: LocationCode
+  orderType: OrderTypeValue
+  orderStatus: OrderStatusValue
+  notes: [MessageInput]
+  orderLines: [JSON]
+
+  """Tổng tiền đơn hàng"""
+  grandTotal: Float
+
+  """Phí chuyển hàng"""
+  shippingFee: Float
+
+  """Khuyến mại"""
+  promotionAmount: Float
+
+  """Giảm giá cho khách hàng Thân thiết, VIP"""
+  discountAmount: Float
+
+  """
+  Thành tiền = grandTotal - discountAmount - promotionAmount + shippingFee 
+  """
+  totalAmount: Float
+
+  """Doanh thu tính thưởng NTV"""
+  revenueTotal: Float
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type SalesOrderItem implements Node {
+  """The ID of an object"""
+  id: ID!
+  salesOrder: SalesOrder
+  entryDate: DateTime
+  contact: Contact
+  location: LocationCode
+  notes: String
+  product: Product!
+  itemDescription: String
+  quantity: Float!
+  cancelQuantity: Float
+  unitPrice: Float!
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean
+  productPrice: ProductPrice
+  lineItemStatus: LineItemStatusValue
+  ReturnItems(after: String, first: Int, before: String, last: Int): ReturnItemConnection
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+"""A connection to a list of items."""
+type SalesOrderItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SalesOrderItemEdge]
+
+  """Total number of items"""
+  totalCount: Int
+}
+
+"""An edge in a connection."""
+type SalesOrderItemEdge {
+  """The item at the end of the edge"""
+  node: SalesOrderItem
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input SalesOrderItemInput {
+  salesOrderId: ID
+  entryDate: DateTime
+  contactId: ID
+  location: LocationCode
+  notes: String
+  productId: ID
+  itemDescription: String
+  quantity: Float!
+  cancelQuantity: Float
+  unitPrice: Float!
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean
+  productPriceId: ID
+  lineItemStatus: LineItemStatusValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type SalesOrderItemMutations {
+  create(input: CreateSalesOrderItemInput!): CreateSalesOrderItemPayload
+  update(input: UpdateSalesOrderItemInput!): UpdateSalesOrderItemPayload
+  delete(input: DeleteSalesOrderItemInput!): DeleteSalesOrderItemPayload
+}
+
+type SalesOrderItemQuery {
+  """Sales Order Line Item Model"""
+  salesOrderItems(after: String, first: Int, before: String, last: Int): SalesOrderItemConnection
+  salesOrderItem(id: ID!): SalesOrderItem
+}
+
+input SalesOrderItemUpdate {
+  salesOrderId: ID
+  entryDate: DateTime
+  contactId: ID
+  location: LocationCode
+  notes: String
+  productId: ID
+  itemDescription: String
+  quantity: Float
+  cancelQuantity: Float
+  unitPrice: Float
+  revenuePrice: Float
+  promotional: Boolean
+  discountable: Boolean
+  productPriceId: ID
+  lineItemStatus: LineItemStatusValue
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type SalesOrderMutations {
+  create(input: CreateSalesOrderInput!): CreateSalesOrderPayload
+  update(input: UpdateSalesOrderInput!): UpdateSalesOrderPayload
+  delete(input: DeleteSalesOrderInput!): DeleteSalesOrderPayload
+}
+
+type SalesOrderQuery {
+  """Sales Order Model"""
+  salesOrders(after: String, first: Int, before: String, last: Int): SalesOrderConnection
+  salesOrder(id: ID!): SalesOrder
+}
+
+input SalesOrderUpdate {
+  orderDate: DateTime
+  contactId: ID
+  location: LocationCode
+  orderType: OrderTypeValue
+  orderStatus: OrderStatusValue
+  notes: [MessageUpdate]
+  orderLines: [JSON]
+
+  """Tổng tiền đơn hàng"""
+  grandTotal: Float
+
+  """Phí chuyển hàng"""
+  shippingFee: Float
+
+  """Khuyến mại"""
+  promotionAmount: Float
+
+  """Giảm giá cho khách hàng Thân thiết, VIP"""
+  discountAmount: Float
+
+  """
+  Thành tiền = grandTotal - discountAmount - promotionAmount + shippingFee 
+  """
+  totalAmount: Float
+
+  """Doanh thu tính thưởng NTV"""
+  revenueTotal: Float
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type Source {
+  title: String!
+  link: String
+  page: String
+  location: LocationCode
+  date: DateTime
+  utm: JSON
+}
+
+input SourceInput {
+  title: String!
+  link: String
+  page: String
+  location: LocationCode
+  date: DateTime
+  utm: JSON
+}
+
+input SourceUpdate {
+  title: String
+  link: String
+  page: String
+  location: LocationCode
+  date: DateTime
+  utm: JSON
+}
+
+type Staff implements Node & Contact {
+  """The ID of an object"""
+  id: ID!
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  fullName: String
+  shortName: String
+  phone: String
+  email: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue!
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+  position: PositionCode
+  positions: [PositionLog]
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [Address]
+  identification: [Identification]
+  messages: [Message]
+  status: StatusValue
+  locations: [String]
+  area: AreaCode
+
+  """Người quản lý trực tiếp"""
+  manager: Staff
+
+  """Assignment that are not scheduled yet"""
+  inbox(filter: AssignmentFilter, orderBy: [AssignmentOrderBy], after: String, first: Int, before: String, last: Int): AssignmentConnection
+
+  """Assignment that are scheduled at today or overdue"""
+  today(filter: AssignmentFilter, orderBy: [AssignmentOrderBy], after: String, first: Int, before: String, last: Int): AssignmentConnection
+
+  """Contact need to call to make an appointment or consultation"""
+  call(filter: ContactFilter, orderBy: [ContactOrderBy], after: String, first: Int, before: String, last: Int): ContactConnection
+
+  """Assignment that are scheduled from tomorrow onward"""
+  schedule(filter: AssignmentFilter, orderBy: [AssignmentOrderBy], after: String, first: Int, before: String, last: Int): AssignmentConnection
+
+  """Assignment assigned by this consultant but not received yet"""
+  outbox(filter: AssignmentFilter, orderBy: [AssignmentOrderBy], after: String, first: Int, before: String, last: Int): AssignmentConnection
+
+  """Customer with status = favorite"""
+  favorite(filter: CustomerFilter, orderBy: [CustomerOrderBy], after: String, first: Int, before: String, last: Int): CustomerConnection
+
+  """Customers who are taken care by"""
+  customers(from: Date, to: Date, filter: CustomerFilter, orderBy: [CustomerOrderBy], after: String, first: Int, before: String, last: Int): CustomerConnection
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+
+  """Consultants"""
+  consultants(filter: ContactFilter, orderBy: [ContactOrderBy]): [Contact]
+
+  """Distributors"""
+  distributors(filter: ContactFilter, orderBy: [ContactOrderBy], after: String, first: Int, before: String, last: Int): ContactConnection
+
+  """All contacts"""
+  contacts(text: String, filter: ContactFilter, orderBy: [ContactOrderBy], after: String, first: Int, before: String, last: Int): ContactConnection
+}
+
+input StaffFilter {
+  firstName: String
+  lastName: String
+  phone: String
+
+  """Contact can be: Customer, Staff or Distributor"""
+  category: CategoryValue
+  position: PositionCode
+  status: StatusValue
+}
+
+input StaffInput {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String!
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressInput]
+  identification: [IdentificationInput]
+  messages: [MessageInput]
+  status: StatusValue
+  locations: [String]
+  area: AreaCode
+
+  """Người quản lý trực tiếp"""
+  managerId: ID
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+type StaffMutations {
+  create(input: CreateStaffInput!): CreateStaffPayload
+  update(input: UpdateStaffInput!): UpdateStaffPayload
+  upsert(input: UpsertStaffInput!): UpsertStaffPayload
+  delete(input: DeleteStaffInput!): DeleteStaffPayload
+  makePreconsultation(input: MakePreconsultationStaffInput!): MakePreconsultationStaffPayload
+  receiveAppointment(input: ReceiveAppointmentStaffInput!): ReceiveAppointmentStaffPayload
+}
+
+enum StaffOrderBy {
+  FIRSTNAME_ASC
+  FIRSTNAME_DESC
+  LASTNAME_ASC
+  LASTNAME_DESC
+}
+
+type StaffQuery {
+  staffs(filter: StaffFilter, orderBy: [StaffOrderBy]): [Staff]
+  staff(id: ID!): Staff
+  staffBy(phone: String, email: String): Staff
+}
+
+input StaffUpdate {
+  prefix: PrefixValue
+  firstName: String
+  lastName: String
+  shortName: String
+  phone: String
+  email: String
+  discount: Float
+  wallet: Float
+  bonus: Float
+  revenue: Float
+  groupRevenue: Float
+
+  """
+  Date of first activity such as buying products or joining date for distributor
+  """
+  startedAt: Date
+  birthday: Date
+  addresses: [AddressUpdate]
+  identification: [IdentificationUpdate]
+  messages: [MessageUpdate]
+  status: StatusValue
+  locations: [String]
+  area: AreaCode
+
+  """Người quản lý trực tiếp"""
+  managerId: ID
+  createdById: ID
+  updatedById: ID
+  deletedById: ID
+}
+
+scalar StatusValue
+
+type StringValues {
+  value: String
+  title: String
+  description: String
+}
+
+type Touchpoint implements Node {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+
+  """Fields for source information"""
+  fields: [FieldsValue]
+  list: [String]
+  sortOrder: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+enum TouchpointOrderBy {
+  SORTORDER_ASC
+  SORTORDER_DESC
+}
+
+type Town implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String!
+  prefix: String
+  city: City
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+input TownFilter {
+  name: String
+  cityId: String
+}
+
+enum TownOrderBy {
+  NAME_ASC
+  NAME_DESC
+  PREFIX_ASC
+  PREFIX_DESC
+}
+
+scalar UnitOfMeasureValue
+
+input UpdateCustomerInput {
+  id: ID!
+  customer: CustomerUpdate
+  clientMutationId: String
+}
+
+type UpdateCustomerPayload {
+  customer: Customer
+  clientMutationId: String
+}
+
+input UpdateDistributorInput {
+  id: ID!
+  distributor: DistributorUpdate
+  clientMutationId: String
+}
+
+type UpdateDistributorPayload {
+  distributor: Distributor
+  clientMutationId: String
+}
+
+input UpdateLocationInput {
+  id: ID!
+  location: LocationUpdate
+  clientMutationId: String
+}
+
+type UpdateLocationPayload {
+  location: Location
+  clientMutationId: String
+}
+
+input UpdatePositionInput {
+  id: ID!
+  position: PositionUpdate
+  clientMutationId: String
+}
+
+type UpdatePositionPayload {
+  position: Position
+  clientMutationId: String
+}
+
+input UpdateProductPriceInput {
+  id: ID!
+  productPrice: ProductPriceUpdate
+  clientMutationId: String
+}
+
+type UpdateProductPricePayload {
+  productPrice: ProductPrice
+  clientMutationId: String
+}
+
+input UpdateReturnItemInput {
+  id: ID!
+  returnItem: ReturnItemUpdate
+  clientMutationId: String
+}
+
+type UpdateReturnItemPayload {
+  returnItem: ReturnItem
+  clientMutationId: String
+}
+
+input UpdateReturnOrderInput {
+  id: ID!
+  returnOrder: ReturnOrderUpdate
+  clientMutationId: String
+}
+
+type UpdateReturnOrderPayload {
+  returnOrder: ReturnOrder
+  clientMutationId: String
+}
+
+input UpdateSalesOrderInput {
+  id: ID!
+  salesOrder: SalesOrderUpdate
+  clientMutationId: String
+}
+
+input UpdateSalesOrderItemInput {
+  id: ID!
+  salesOrderItem: SalesOrderItemUpdate
+  clientMutationId: String
+}
+
+type UpdateSalesOrderItemPayload {
+  salesOrderItem: SalesOrderItem
+  clientMutationId: String
+}
+
+type UpdateSalesOrderPayload {
+  salesOrder: SalesOrder
+  clientMutationId: String
+}
+
+input UpdateStaffInput {
+  id: ID!
+  staff: StaffUpdate
+  clientMutationId: String
+}
+
+type UpdateStaffPayload {
+  staff: Staff
+  clientMutationId: String
+}
+
+input UpsertCustomerInput {
+  phone: String
+  email: String
+  customer: CustomerUpdate
+  clientMutationId: String
+}
+
+type UpsertCustomerPayload {
+  customer: Customer
+  clientMutationId: String
+}
+
+input UpsertDistributorInput {
+  phone: String
+  email: String
+  distributor: DistributorUpdate
+  clientMutationId: String
+}
+
+type UpsertDistributorPayload {
+  distributor: Distributor
+  clientMutationId: String
+}
+
+input UpsertStaffInput {
+  phone: String
+  email: String
+  staff: StaffUpdate
+  clientMutationId: String
+}
+
+type UpsertStaffPayload {
+  staff: Staff
+  clientMutationId: String
+}
+
+type User implements Node {
+  """The ID of an object"""
+  id: ID!
+  username: String
+  lastName: String
+  firstName: String
+  fullName: String
+  phone: String
+  email: String
+  category: CategoryValue
+  position: Position
+  locations(filter: LocationFilter, orderBy: [LocationOrderBy]): [Location]
+  location: LocationCode
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+  createdBy: Contact
+  updatedBy: Contact
+  deletedBy: Contact
+}
+
+type UserMutations {
+  register(input: RegisterUserInput!): RegisterUserPayload
+  login(input: LoginUserInput!): LoginUserPayload
+  loginJwt(input: LoginJwtUserInput!): LoginJwtUserPayload
+  logout(input: LogoutUserInput!): LogoutUserPayload
+  changePassword(input: ChangePasswordUserInput!): ChangePasswordUserPayload
+}

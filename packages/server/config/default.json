@@ -1,0 +1,34 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "public": "../public/",
+  "rootApi": "/api/",
+  "modelPath": "api/models/${_.lowerFirst(name)}",
+  "controllerPath": "api/controllers/${_.lowerFirst(name)}",
+  "paginate": {},
+  "authentication": {
+    "secret": "acdb5b59d6a66f030ea7d90f129b2b36c7404c29c3f76dc706a967310d030d268c36fc19387610b83c1eee0e68d4bea4b844c028b624b87d64be365c6ff89ff731a1a9510e7c8cb3ba7d401ce26ba35b560e76c43a00a39cd5afb7594d3003849fd81872f988696ad28c87b0a934e9ca423517f51f185cf7897a880e4a486cd6b7726675c1be8ca25cc06f4baf46b18d02a71df64171b575a53931683a2b47ba4dbc4f00d45bf5252603853ad6a068f9b3fa2a3124b6062b9714217f045dbd189a33ca6ee7f56b0d4071fd254f7e4895828ef86b4653e237fe0c674bd8c135157640360987581ba4cf22546ab7cd78b18ff299daf4d260aacca12aa282d5fa67",
+    "strategies": ["jwt", "local"],
+    "path": "/authentication",
+    "entity": "user",
+    "model": "user",
+    "service": "/api/user",
+    "jwt": {
+      "header": {
+        "typ": "JWT",
+        "alg": "HS256"
+      },
+      "subject": "access",
+      "audience": "anonymous",
+      "issuer": "sunshine",
+      "expiresIn": "60d"
+    },
+    "local": {
+      "usernameField": "\\username",
+      "passwordField": "password",
+      "emailField": "email",
+      "phoneField": "phone"
+    }
+  },
+  "mongodb": "mongodb://admin:care4you@ds115085.mlab.com:15085/sunshinedb"
+}
