@@ -1,5 +1,6 @@
 export { default as GenderInput } from './GenderInput';
 export { default as Input } from './Input';
+export { default as InputBase } from './InputBase';
 export { default as PhoneInput } from './PhoneInput';
 export { default as PasswordInput } from './PasswordInput';
 export { default as NumberInput } from './NumberInput';

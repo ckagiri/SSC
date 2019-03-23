@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import classNames from 'classnames';
+import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import MuiInput from '@material-ui/core/Input';
 import FilledInput from '@material-ui/core/FilledInput';
@@ -105,6 +106,7 @@ const Input = ({
   const labelRef = useRef();
   const inputNode = useRef();
   const classes = useStyles(props);
+  // console.log('render');
 
   // const [value, setValue] = useControlProp(valueProp, onValueChange);
   const [isOpen, toggleMenu] = useToggle(isOpenProp, openMenu, closeMenu, false);
@@ -314,4 +316,13 @@ Input.defaultProps = {
   variant: 'standard',
 };
 
-export default Input;
+export default React.memo(Input);
+
+// export default React.memo(Input, (nextProps, prevProps) => {
+//   _.forEach(nextProps, (v, k) => {
+//     if (prevProps[k] !== v) {
+//       console.log(nextProps.name, k, v, prevProps[k]);
+//     }
+//   });
+//   return _.isEqual(nextProps, prevProps);
+// });

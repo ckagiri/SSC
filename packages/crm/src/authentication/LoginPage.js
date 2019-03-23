@@ -2,7 +2,7 @@ import React from 'react';
 import { QueryRenderer } from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 import {
-  Input,
+  InputBase as Input,
   Field,
   withMutation,
   login,
@@ -10,7 +10,6 @@ import {
   LoadingButton,
   Loading,
   Typography,
-  // Debug,
 } from '@ssc/core';
 import { Card, CardContent, CardActions } from '@material-ui/core';
 import { get } from 'lodash';
@@ -33,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const LoginPage = ({ form: { isValid, submitting, errors }, ...props }) => {
+const LoginPage = ({ isValid, isSubmitting, error, ...props }) => {
   const classes = useStyles(props);
   return (
     <Card className={classes.root}>
@@ -41,18 +40,18 @@ const LoginPage = ({ form: { isValid, submitting, errors }, ...props }) => {
         <img src="/images/sunshine-logo.png" alt="Sunshine" height={48} />
       </CardContent>
       <CardContent>
-        {errors && typeof errors === 'string' && <Typography color="error">{errors}</Typography>}
+        {error && <Typography color="error">{error}</Typography>}
         <Field
           Component={Input}
           name="credential"
           placeholder="Điện thoại/Email/Tên đăng nhập"
           label="Tên đăng nhập"
         />
-        <Field Component={PasswordInput} name="password" />
+        <Field Component={Input} name="password" label="Mật khẩu" />
         <LocationFieldInput name="location" />
       </CardContent>
       <CardActions>
-        <LoadingButton color="primary" type="submit" disabled={!isValid} loading={submitting}>
+        <LoadingButton color="primary" type="submit" disabled={!isValid} loading={isSubmitting}>
           Đăng nhập
         </LoadingButton>
       </CardActions>
@@ -60,16 +59,17 @@ const LoginPage = ({ form: { isValid, submitting, errors }, ...props }) => {
   );
 };
 
-const onComplete = (v, { match }) => {
+const onComplete = (v, { location, ...props }) => {
   login(v);
-  if (get(match, 'location.pathname') !== '/login') {
-    window.location.href = get(match, 'location.pathname');
+  if (get(location, 'pathname') !== '/login') {
+    window.location.href = get(location, 'pathname');
   } else {
     window.location.href = '/';
   }
 };
 
 const LoginContainer = withMutation({
+  debug: true,
   environment,
   onComplete,
   validationSchema: loginValidation,

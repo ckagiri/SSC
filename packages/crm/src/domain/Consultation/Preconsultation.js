@@ -25,6 +25,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// <Card>
+// <div>
+//   <PersonTabs
+//     className={classes.tabs}
+//     name="persons"
+//     currentPerson={currentPerson}
+//     onChange={setCurrentPerson}
+//   />
+//   <Divider className={classes.divider} />
+// </div>
+
+// <CardContent>
+//   <PersonPreInput name={`persons.${currentPerson}`} />
+// </CardContent>
+// </Card>
+
+// <CardContent>
+// <AppointmentPreInput />
+// </CardContent>
+
 const Preconsultation = ({ customer, ...props }) => {
   const classes = useStyles(props);
   const [currentPerson, setCurrentPerson] = useState(0);
@@ -45,7 +65,6 @@ const Preconsultation = ({ customer, ...props }) => {
           <PersonPreInput name={`persons.${currentPerson}`} />
         </CardContent>
       </Card>
-
       <CardContent>
         <AppointmentPreInput />
       </CardContent>
@@ -60,6 +79,7 @@ const Preconsultation = ({ customer, ...props }) => {
 
 export default createFragmentContainer(
   withMutation({
+    debug: true,
     mapPropsToValues: props => (props && props.customer) || {},
   })(Preconsultation),
   graphql`

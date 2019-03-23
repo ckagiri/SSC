@@ -12,7 +12,7 @@ var Input = function Input(_ref) {
       props = _objectWithoutProperties(_ref, ["onChange"]);
 
   return React.createElement(InputBase, _extends({
-    onValueChange: onChange
+    onChange: onChange
   }, props));
 };
 

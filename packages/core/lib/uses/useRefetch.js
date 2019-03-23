@@ -47,7 +47,7 @@ var useRefecth = function useRefecth(_ref) {
   var finishLoading = function finishLoading(err) {
     setLoading(false);
     setError(err);
-    if (fetcher.current) fetcher.current.dispose();
+    fetcher.current = null;
   };
 
   var onRefetch = function onRefetch(value) {

@@ -16,7 +16,9 @@ var BaseItem = function BaseItem(_ref) {
     case 'subheader':
       return React.createElement(ListSubheader, _extends({
         color: item.color
-      }, props), item.primary);
+      }, props, {
+        onClick: function onClick() {}
+      }), item.primary);
 
     case 'divider':
       return React.createElement(Divider, null);

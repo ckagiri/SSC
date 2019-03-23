@@ -7,7 +7,7 @@ import {
   LossFieldInput,
   GenderInput,
   Field,
-  useField,
+  useScope,
   // Debug,
 } from '@ssc/core';
 import { makeStyles } from '@material-ui/styles';
@@ -73,8 +73,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PersonTeleInput = ({ name, ...props }) => {
-  const { form } = useField({ name, ...props });
-  const { getFieldValue } = form;
+  const { getFieldValue } = useScope({ name, ...props });
   const classes = useStyles(props);
   return (
     <div>

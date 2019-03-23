@@ -20,6 +20,7 @@ const Autocomplete = ({
   onClear,
   loading,
   onRefetch,
+  onValueChange,
   onChange,
   onSelect,
   className,
@@ -71,7 +72,7 @@ const Autocomplete = ({
       itemCount={items && items.length} // Needed for windowing
       itemToString={itemToString}
       onInputValueChange={handleInputValueChange}
-      onChange={i => onChange && onChange(itemToValue(i))}
+      onChange={i => onValueChange && onValueChange(itemToValue(i))}
       onSelect={onSelect}
       initialIsOpen={false}
     >
@@ -84,8 +85,8 @@ const Autocomplete = ({
               if (onFocus) onFocus(e);
             }}
             onClear={() => {
-              if (onClear) onClear();
               downshiftProps.clearSelection();
+              // if (onClear) onClear();
               // handleInputValueChange(null);
               downshiftProps.openMenu();
             }}
@@ -128,7 +129,6 @@ const Autocomplete = ({
                   elevation={elevation}
                 >
                   <VirtualList
-                    onClick={() => console.log('here')}
                     width={inputNode.current && inputNode.current.clientWidth}
                     menuItemCount={menuItemCount}
                     rowHeight={rowHeight}
@@ -213,4 +213,4 @@ Autocomplete.propTypes = {
 
 export const stateChangeTypes = Downshift.stateChangeTypes;
 export const resetIdCounter = Downshift.resetIdCounter;
-export default Autocomplete;
+export default React.memo(Autocomplete);

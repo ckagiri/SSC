@@ -6,9 +6,10 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-import React from 'react';
-import { useFormikContext as useFormContext, getIn, setIn } from 'formik';
+import React, { useCallback } from 'react';
+import { useFormikContext as useFormContext, getIn } from 'formik';
 import { processValidationError } from '@ssc/common';
+import * as _ from 'lodash';
 
 var callAll = function callAll() {
   for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -28,32 +29,32 @@ var callAll = function callAll() {
 
 export var useField = function useField() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      fieldName = _ref.name,
+      name = _ref.name,
       parent = _ref.parent,
       onChange = _ref.onChange,
+      onValueChange = _ref.onValueChange,
       onBlur = _ref.onBlur,
+      onClear = _ref.onClear,
       validate = _ref.validate,
       validateSchema = _ref.validateSchema,
       disabled = _ref.disabled,
+      error = _ref.error,
       value = _ref.value,
-      rest = _objectWithoutProperties(_ref, ["name", "parent", "onChange", "onBlur", "validate", "validateSchema", "disabled", "value"]);
+      rest = _objectWithoutProperties(_ref, ["name", "parent", "onChange", "onValueChange", "onBlur", "onClear", "validate", "validateSchema", "disabled", "error", "value"]);
 
-  var _getFieldName = function getFieldName(name, parent) {
-    return parent ? name ? "".concat(parent, ".").concat(name) : parent : name;
-  };
+  var fieldName = parent ? name ? "".concat(parent, ".").concat(name) : parent : name;
 
-  var form = useFormContext(rest);
-  var submitCount = form.submitCount;
-
-  var name = _getFieldName(fieldName, parent);
-
-  var getFieldValue = function getFieldValue(fieldName, defaultValue) {
-    return getIn(form.values, _getFieldName(fieldName, name), defaultValue);
-  };
-
-  var setFieldValue = function setFieldValue(fieldName, value) {
-    return form.setFieldValue(_getFieldName(fieldName, name), value || undefined);
-  };
+  var _useFormContext = useFormContext(),
+      values = _useFormContext.values,
+      errors = _useFormContext.errors,
+      touched = _useFormContext.touched,
+      handleChange = _useFormContext.handleChange,
+      handleBlur = _useFormContext.handleBlur,
+      dirty = _useFormContext.dirty,
+      registerField = _useFormContext.registerField,
+      unregisterField = _useFormContext.unregisterField,
+      setFieldValue = _useFormContext.setFieldValue,
+      setFieldTouched = _useFormContext.setFieldTouched;
 
   var validator = validate || validateSchema && function (v) {
     return new Promise(function (resolve, reject) {
@@ -68,52 +69,39 @@ export var useField = function useField() {
   };
 
   React.useEffect(function () {
-    if (name) {
+    if (fieldName) {
       // sync value to the form values
-      if (!form.dirty && value) form.setFieldValue(name, value);
-      form.registerField(name, {
+      if (!dirty && value) setFieldValue(fieldName, value);
+      registerField(name, {
         validate: validator
       });
       return function () {
-        form.unregisterField(name);
+        unregisterField(name);
       };
     }
 
     return function () {};
-  }, [name, validate, validateSchema]);
+  }, [name, parent, validate, validateSchema]);
 
-  var formChange = function formChange(val) {
-    form.setFieldValue(name, val || undefined);
-    form.setFieldTouched(name, true);
+  var handleValueChange = function handleValueChange(v) {
+    setFieldValue(fieldName, v === null ? undefined : v);
+    setFieldTouched(fieldName, true);
   };
 
-  return _objectSpread({
-    name: name,
-    value: getFieldValue(null),
+  return _objectSpread({}, rest, {
     disabled: disabled,
-    onChange: name && callAll(formChange, onChange // validateOnChange && validator
-    ),
-    onBlur: name && callAll(form.handleBlur, onBlur // validateOnBlur && (() => validator(getFieldValue()))
-    ),
-    error: !disabled && name && getIn(form.touched, name, !!submitCount) ? getIn(form.errors, name) : null
-  }, rest, {
-    form: _objectSpread({}, form, {
-      getFieldValue: getFieldValue,
-      setFieldValue: setFieldValue,
-      setFieldTouched: function setFieldTouched(fieldName) {
-        var touched = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-        return form.setFieldTouched(_getFieldName(fieldName, name), touched);
-      },
-      setFieldError: function setFieldError(fieldName, error) {
-        return form.setFieldError(_getFieldName(fieldName, name), error);
-      },
-      getFieldName: function getFieldName(fieldName) {
-        return _getFieldName(name, parent);
-      }
-    })
+    name: fieldName,
+    value: getIn(values, fieldName),
+    error: !disabled && (error || getIn(touched, fieldName) && getIn(errors, fieldName)),
+    onChange: useCallback(callAll(handleChange(fieldName), onChange), [fieldName]),
+    onValueChange: useCallback(callAll(handleValueChange), onValueChange),
+    onBlur: useCallback(callAll(handleBlur(fieldName), onChange), [fieldName]),
+    onClear: useCallback(callAll(function () {
+      return setFieldValue(fieldName, undefined);
+    }, onClear), [fieldName])
   });
 };
-export var connect = function connect(Component) {
+export var withField = function withField(Component) {
   return function (props) {
     return React.createElement(Component, useField(props));
   };

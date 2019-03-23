@@ -21,8 +21,8 @@ const AppointmentTeleInput = ({ name, ...props }) => {
     <div className={classes.root}>
       <Field Component={Input} label="Hẹn" name="action" multiline parent={name} />
       <Field Component={DateTimeInput} name="date" parent={name} />
-      <LocationFieldInput label="Tại" parent={name} />
-      <ConsultantFieldInput parent={name} />
+      <LocationFieldInput label="Tại" parent={name} name="location" />
+      <ConsultantFieldInput parent={name} name="consultant" />
     </div>
   );
 };

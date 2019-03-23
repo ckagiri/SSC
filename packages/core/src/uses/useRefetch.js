@@ -16,7 +16,7 @@ const useRefecth = ({ relay, getFilter, retry, error: queryError, ...props }) =>
   const finishLoading = err => {
     setLoading(false);
     setError(err);
-    if (fetcher.current) fetcher.current.dispose();
+    fetcher.current = null;
   };
 
   const onRefetch = value => startLoading(refetch(getFilter(value), null, finishLoading));

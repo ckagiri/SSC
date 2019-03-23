@@ -24,6 +24,7 @@ export default withPreload(
     graphql`
       fragment ProgramFieldInput_programs on Program @relay(plural: true) {
         brand
+        code
         name
         id
       }

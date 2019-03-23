@@ -16,6 +16,7 @@ function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) r
 
 import React, { useRef } from 'react';
 import classNames from 'classnames';
+import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import MuiInput from '@material-ui/core/Input';
 import FilledInput from '@material-ui/core/FilledInput';
@@ -103,7 +104,8 @@ var Input = function Input(_ref) {
 
   var labelRef = useRef();
   var inputNode = useRef();
-  var classes = useStyles(props); // const [value, setValue] = useControlProp(valueProp, onValueChange);
+  var classes = useStyles(props); // console.log('render');
+  // const [value, setValue] = useControlProp(valueProp, onValueChange);
 
   var _useToggle = useToggle(isOpenProp, openMenu, closeMenu, false),
       _useToggle2 = _slicedToArray(_useToggle, 2),
@@ -286,4 +288,11 @@ Input.defaultProps = {
   select: false,
   variant: 'standard'
 };
-export default Input;
+export default React.memo(Input); // export default React.memo(Input, (nextProps, prevProps) => {
+//   _.forEach(nextProps, (v, k) => {
+//     if (prevProps[k] !== v) {
+//       console.log(nextProps.name, k, v, prevProps[k]);
+//     }
+//   });
+//   return _.isEqual(nextProps, prevProps);
+// });

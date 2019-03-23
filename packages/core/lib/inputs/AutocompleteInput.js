@@ -25,10 +25,11 @@ var Autocomplete = function Autocomplete(_ref) {
       itemToValue = _ref.itemToValue,
       valueToString = _ref.valueToString,
       getRootProps = _ref.getRootProps,
-      _onClear = _ref.onClear,
+      onClear = _ref.onClear,
       loading = _ref.loading,
       onRefetch = _ref.onRefetch,
-      _onChange = _ref.onChange,
+      onValueChange = _ref.onValueChange,
+      onChange = _ref.onChange,
       onSelect = _ref.onSelect,
       className = _ref.className,
       select = _ref.select,
@@ -46,7 +47,7 @@ var Autocomplete = function Autocomplete(_ref) {
       _onFocus = _ref.onFocus,
       onInputValueChange = _ref.onInputValueChange,
       inputValue = _ref.inputValue,
-      props = _objectWithoutProperties(_ref, ["items", "itemToString", "itemToValue", "valueToString", "getRootProps", "onClear", "loading", "onRefetch", "onChange", "onSelect", "className", "select", "loadMoreRows", "totalCount", "rowHeight", "menuHeight", "menuItemCount", "renderItem", "getItemKey", "square", "elevation", "value", "inputRef", "onFocus", "onInputValueChange", "inputValue"]);
+      props = _objectWithoutProperties(_ref, ["items", "itemToString", "itemToValue", "valueToString", "getRootProps", "onClear", "loading", "onRefetch", "onValueChange", "onChange", "onSelect", "className", "select", "loadMoreRows", "totalCount", "rowHeight", "menuHeight", "menuItemCount", "renderItem", "getItemKey", "square", "elevation", "value", "inputRef", "onFocus", "onInputValueChange", "inputValue"]);
 
   var inputNode = useRef(null);
 
@@ -77,7 +78,7 @@ var Autocomplete = function Autocomplete(_ref) {
     itemToString: itemToString,
     onInputValueChange: handleInputValueChange,
     onChange: function onChange(i) {
-      return _onChange && _onChange(itemToValue(i));
+      return onValueChange && onValueChange(itemToValue(i));
     },
     onSelect: onSelect,
     initialIsOpen: false
@@ -90,8 +91,8 @@ var Autocomplete = function Autocomplete(_ref) {
         if (_onFocus) _onFocus(e);
       },
       onClear: function onClear() {
-        if (_onClear) _onClear();
-        downshiftProps.clearSelection(); // handleInputValueChange(null);
+        downshiftProps.clearSelection(); // if (onClear) onClear();
+        // handleInputValueChange(null);
 
         downshiftProps.openMenu();
       },
@@ -139,9 +140,6 @@ var Autocomplete = function Autocomplete(_ref) {
         square: square,
         elevation: elevation
       }), React.createElement(VirtualList, _extends({
-        onClick: function onClick() {
-          return console.log('here');
-        },
         width: inputNode.current && inputNode.current.clientWidth,
         menuItemCount: menuItemCount,
         rowHeight: rowHeight,
@@ -231,4 +229,4 @@ Autocomplete.propTypes = {
 };
 export var stateChangeTypes = Downshift.stateChangeTypes;
 export var resetIdCounter = Downshift.resetIdCounter;
-export default Autocomplete;
+export default React.memo(Autocomplete);

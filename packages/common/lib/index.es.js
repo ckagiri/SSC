@@ -82,5 +82,5 @@ const heightValidation = number('').min(100, 'Chiều cao phải trên 100cm').m
 const weightValidation = number('').min(5, 'Cân nặng phải trên 5kg').max(200, 'Cân nặng không quá 200kg');
 const timeValidation = number('').min(5, 'Cân nặng phải trên 5kg').max(200, 'Cân nặng không quá 200kg');
 
-export { bmiLevels, bmiToKg, bmi, getBmiLevel, toLose, isEmail, isPhone, isShortPhone, processValidationError, loginValidation, sourceValidation, registerContactValidation, addressValidation, heightValidation, weightValidation, timeValidation };
+export { addressValidation, bmi, bmiLevels, bmiToKg, getBmiLevel, heightValidation, isEmail, isPhone, isShortPhone, loginValidation, processValidationError, registerContactValidation, sourceValidation, timeValidation, toLose, weightValidation };
 //# sourceMappingURL=index.es.js.map

@@ -12,7 +12,7 @@ const BaseItem = ({ item, button, ...props }) => {
   switch (item.variant) {
     case 'subheader':
       return (
-        <ListSubheader color={item.color} {...props}>
+        <ListSubheader color={item.color} {...props} onClick={() => {}}>
           {item.primary}
         </ListSubheader>
       );

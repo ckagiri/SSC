@@ -1,30 +1,38 @@
-import React from 'react';
-import { useFormikContext as useFormContext, getIn, setIn } from 'formik';
+import React, { useCallback } from 'react';
+import { useFormikContext as useFormContext, getIn } from 'formik';
 import { processValidationError } from '@ssc/common';
+import * as _ from 'lodash';
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
 
 export const useField = ({
-  name: fieldName,
+  name,
   parent,
   onChange,
+  onValueChange,
   onBlur,
+  onClear,
   validate,
   validateSchema,
   disabled,
+  error,
   value,
   ...rest
 } = {}) => {
-  const getFieldName = (name, parent) => (parent ? (name ? `${parent}.${name}` : parent) : name);
-  const form = useFormContext(rest);
-  const { submitCount } = form;
-  const name = getFieldName(fieldName, parent);
+  const fieldName = parent ? (name ? `${parent}.${name}` : parent) : name;
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    dirty,
+    registerField,
+    unregisterField,
+    setFieldValue,
+    setFieldTouched,
+  } = useFormContext();
 
-  const getFieldValue = (fieldName, defaultValue) =>
-    getIn(form.values, getFieldName(fieldName, name), defaultValue);
-
-  const setFieldValue = (fieldName, value) =>
-    form.setFieldValue(getFieldName(fieldName, name), value || undefined);
   const validator =
     validate ||
     (validateSchema &&
@@ -41,60 +49,38 @@ export const useField = ({
         })));
 
   React.useEffect(() => {
-    if (name) {
+    if (fieldName) {
       // sync value to the form values
-      if (!form.dirty && value) form.setFieldValue(name, value);
+      if (!dirty && value) setFieldValue(fieldName, value);
 
-      form.registerField(name, {
+      registerField(name, {
         validate: validator,
       });
       return () => {
-        form.unregisterField(name);
+        unregisterField(name);
       };
     }
     return () => {};
-  }, [name, validate, validateSchema]);
+  }, [name, parent, validate, validateSchema]);
 
-  const formChange = val => {
-    form.setFieldValue(name, val || undefined);
-    form.setFieldTouched(name, true);
+  const handleValueChange = v => {
+    setFieldValue(fieldName, v === null ? undefined : v);
+    setFieldTouched(fieldName, true);
   };
+
   return {
-    name,
-    value: getFieldValue(null),
-    disabled,
-    onChange:
-      name &&
-      callAll(
-        formChange,
-        onChange,
-        // validateOnChange && validator
-      ),
-    onBlur:
-      name &&
-      callAll(
-        form.handleBlur,
-        onBlur,
-        // validateOnBlur && (() => validator(getFieldValue()))
-      ),
-    error:
-      !disabled && name && getIn(form.touched, name, !!submitCount)
-        ? getIn(form.errors, name)
-        : null,
-    // touched: form.touched[name],
     ...rest,
-    form: {
-      ...form,
-      getFieldValue,
-      setFieldValue,
-      setFieldTouched: (fieldName, touched = true) =>
-        form.setFieldTouched(getFieldName(fieldName, name), touched),
-      setFieldError: (fieldName, error) => form.setFieldError(getFieldName(fieldName, name), error),
-      getFieldName: fieldName => getFieldName(name, parent),
-    },
+    disabled,
+    name: fieldName,
+    value: getIn(values, fieldName),
+    error: !disabled && (error || (getIn(touched, fieldName) && getIn(errors, fieldName))),
+    onChange: useCallback(callAll(handleChange(fieldName), onChange), [fieldName]),
+    onValueChange: useCallback(callAll(handleValueChange), onValueChange),
+    onBlur: useCallback(callAll(handleBlur(fieldName), onChange), [fieldName]),
+    onClear: useCallback(callAll(() => setFieldValue(fieldName, undefined), onClear), [fieldName]),
   };
 };
 
-export const connect = Component => props => <Component {...useField(props)} />;
+export const withField = Component => props => <Component {...useField(props)} />;
 
 export const Field = ({ Component, ...props }) => <Component {...useField(props)} />;
